@@ -3,556 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>기하와 극한 - 10단계 변형문제</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>함수의 극한: 곡선과 직선의 교점 마스터</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .progress-container {
-            background: rgba(255,255,255,0.2);
-            border-radius: 30px;
-            padding: 5px;
-            margin-bottom: 30px;
-        }
-
-        .progress-bar {
-            height: 25px;
-            background: linear-gradient(90deg, #00c853, #69f0ae);
-            border-radius: 25px;
-            width: 0%;
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1b5e20;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .quiz-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            display: none;
-        }
-
-        .quiz-card.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .level-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .level-easy { background: #e8f5e9; color: #2e7d32; }
-        .level-medium { background: #fff3e0; color: #ef6c00; }
-        .level-hard { background: #ffebee; color: #c62828; }
-
-        .question-number {
-            font-size: 1.5rem;
-            color: #667eea;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .question-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #333;
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-        }
-
-        .options {
-            display: grid;
-            gap: 12px;
-        }
-
-        .option {
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.05rem;
-        }
-
-        .option:hover {
-            border-color: #667eea;
-            background: #f5f5ff;
-        }
-
-        .option.selected {
-            border-color: #667eea;
-            background: #ede7f6;
-        }
-
-        .option.correct {
-            border-color: #4caf50;
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .option.wrong {
-            border-color: #f44336;
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .explanation {
-            margin-top: 20px;
-            padding: 20px;
-            background: #fff8e1;
-            border-radius: 10px;
-            border-left: 4px solid #ffc107;
-            display: none;
-        }
-
-        .explanation.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .explanation h4 {
-            color: #f57c00;
-            margin-bottom: 10px;
-        }
-
-        .result-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            display: none;
-        }
-
-        .result-card.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .result-card h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .score-circle {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 30px;
-            color: white;
-        }
-
-        .score-circle .score {
-            font-size: 3rem;
-            font-weight: bold;
-        }
-
-        .score-circle .label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .result-message {
-            font-size: 1.2rem;
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .hint-box {
-            background: #e3f2fd;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            border-left: 4px solid #2196f3;
-        }
-
-        .hint-box h5 {
-            color: #1565c0;
-            margin-bottom: 8px;
-        }
-
-        .formula-box {
-            background: #fce4ec;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            text-align: center;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .math-display { font-size: 1.1rem; margin: 1.5rem 0; padding: 1.2rem; background-color: #ffffff; border-left: 4px solid #3b82f6; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow-x: auto; }
+        .concept-box { background-color: #eff6ff; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #dbeafe; }
+        .option-label { transition: all 0.2s; cursor: pointer; display: block; }
+        .option-label:hover { background-color: #eff6ff; transform: translateY(-2px); border-color: #3b82f6; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>기하와 극한 - 10단계 변형문제</h1>
-            <p>곡선과 직선의 교점에서 원점까지의 거리와 극한</p>
-        </header>
+<body class="p-4 sm:p-8 md:p-12 text-slate-800">
+    <div id="app" class="max-w-4xl mx-auto bg-white shadow-2xl rounded-3xl p-6 sm:p-10 border border-slate-100">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-slate-900 mb-2">함수의 극한</h1>
+        <p class="text-center text-slate-500 mb-8">무리함수와 거리차 극한 마스터 10단계</p>
 
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar">0 / 10</div>
+        <div id="page-study" class="page active">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2">핵심 원리</h2>
+            <div class="concept-box">
+                <h3 class="text-xl font-bold text-blue-600 mb-3">무리식의 극한</h3>
+                <p class="text-slate-700 mb-2">$\sqrt{ax} - \sqrt{bx}$ 꼴의 극한은 유리화를 활용합니다:</p>
+                <div class="math-display">$$ \sqrt{ax} - \sqrt{bx} = \frac{ax - bx}{\sqrt{ax} + \sqrt{bx}} = \frac{(a-b)x}{\sqrt{ax} + \sqrt{bx}} $$</div>
+            </div>
+            <div class="concept-box bg-amber-50 border-amber-200">
+                <h3 class="text-xl font-bold text-amber-600 mb-3">오늘의 문제</h3>
+                <p class="text-slate-700">다음 그림과 같이 두 곡선 $y = \sqrt{5x}$, $y = \sqrt{3x}$와 직선 $x = k$ ($k > 0$)의 교점을 각각 A, B라 할 때,</p>
+                <div class="math-display border-amber-400">$$ \lim_{k \to \infty} (\overline{OA} - \overline{OB}) \text{의 값은? (단, O는 원점이다.)} $$</div>
+                <p class="text-slate-600 text-sm">① $\frac{1}{6}$ ② $\frac{1}{4}$ ③ $\frac{1}{3}$ ④ $\frac{1}{2}$ ⑤ $1$</p>
+            </div>
+            <div class="mt-8 mb-4">
+                <label for="username-input" class="block text-sm font-medium text-slate-600 mb-1">학생 이름</label>
+                <input type="text" id="username-input" placeholder="이름을 입력하세요" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition shadow-sm outline-none">
+            </div>
+            <button onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl mt-2 transition duration-300 shadow-lg transform hover:scale-[1.01]">문제 풀이 시작하기</button>
         </div>
 
-        <div id="quizContainer"></div>
-
-        <div class="result-card" id="resultCard">
-            <h2>퀴즈 완료!</h2>
-            <div class="score-circle">
-                <span class="score" id="finalScore">0</span>
-                <span class="label">/ 10</span>
+        <div id="page-quiz" class="page">
+            <div id="quiz-header" class="mb-6">
+                <div class="flex justify-between items-end mb-2"><span class="text-lg font-bold text-blue-700">Step <span id="current-q-number">1</span></span><span class="text-sm text-slate-400">Total 10 Questions</span></div>
+                <div class="w-full bg-slate-100 rounded-full h-2"><div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div></div>
             </div>
-            <p class="result-message" id="resultMessage"></p>
-            <button class="btn btn-primary" onclick="restartQuiz()">다시 풀기</button>
+            <div id="question-area" class="min-h-[250px] p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                <p id="question-text" class="text-xl font-medium text-slate-800 mb-8 leading-relaxed"></p>
+                <div id="options-container" class="space-y-3"></div>
+            </div>
+            <div id="feedback" class="mt-6 p-4 rounded-xl text-white font-semibold hidden"></div>
+            <div class="flex gap-3 mt-8">
+                <button onclick="prevQuestion()" id="prev-btn" class="hidden px-6 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 rounded-xl transition shadow-sm">이전</button>
+                <button onclick="submitAnswer()" id="submit-btn" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl transition shadow-md">정답 확인</button>
+                <button onclick="nextQuestion()" id="next-btn" class="hidden flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-md">다음 단계</button>
+            </div>
+        </div>
+
+        <div id="page-results" class="page text-center p-8">
+            <div class="mb-6 text-6xl animate-pulse">🏆</div>
+            <h2 class="text-3xl font-extrabold text-slate-800 mb-2">학습 완료!</h2>
+            <div class="text-7xl font-black text-blue-600 my-8"><span id="final-score">0</span><span class="text-3xl text-slate-400">/10</span></div>
+            <div id="upload-status" class="text-sm text-slate-500 mb-8 h-6 font-medium">결과 저장 중...</div>
+            <button onclick="window.location.reload()" class="bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 font-bold py-3 px-8 rounded-xl transition shadow-sm">다시 도전하기</button>
         </div>
     </div>
 
     <script>
-        const problems = [
-            {
-                level: "easy",
-                levelText: "1단계 - 기본",
-                question: `두 곡선 \\(y = \\sqrt{5x}\\), \\(y = \\sqrt{3x}\\)와 직선 \\(x = k\\) (\\(k > 0\\))의 교점을 각각 A, B라 하자.<br><br>
-                \\(\\overline{OA} = \\sqrt{k^2 + 5k}\\), \\(\\overline{OB} = \\sqrt{k^2 + 3k}\\)일 때,<br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - \\overline{OB})\\)의 값은?`,
-                options: ["\\(\\frac{1}{6}\\)", "\\(\\frac{1}{4}\\)", "\\(\\frac{1}{3}\\)", "\\(\\frac{1}{2}\\)", "\\(1\\)"],
-                answer: 4,
-                explanation: `유리화를 이용합니다.<br><br>
-                \\(\\overline{OA} - \\overline{OB} = \\sqrt{k^2+5k} - \\sqrt{k^2+3k}\\)<br><br>
-                \\(= \\frac{(k^2+5k)-(k^2+3k)}{\\sqrt{k^2+5k}+\\sqrt{k^2+3k}} = \\frac{2k}{\\sqrt{k^2+5k}+\\sqrt{k^2+3k}}\\)<br><br>
-                \\(k\\)로 나누면: \\(\\frac{2}{\\sqrt{1+\\frac{5}{k}}+\\sqrt{1+\\frac{3}{k}}}\\)<br><br>
-                \\(k \\to \\infty\\)일 때: \\(\\frac{2}{1+1} = 1\\)`
-            },
-            {
-                level: "easy",
-                levelText: "2단계 - 기본 변형",
-                question: `두 곡선 \\(y = \\sqrt{7x}\\), \\(y = \\sqrt{3x}\\)와 직선 \\(x = k\\) (\\(k > 0\\))의 교점을 각각 A, B라 할 때,<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - \\overline{OB})\\)의 값은? (단, O는 원점)`,
-                options: ["\\(1\\)", "\\(2\\)", "\\(3\\)", "\\(4\\)", "\\(5\\)"],
-                answer: 1,
-                explanation: `\\(\\overline{OA} = \\sqrt{k^2+7k}\\), \\(\\overline{OB} = \\sqrt{k^2+3k}\\)<br><br>
-                유리화: \\(\\frac{(k^2+7k)-(k^2+3k)}{\\sqrt{k^2+7k}+\\sqrt{k^2+3k}} = \\frac{4k}{\\sqrt{k^2+7k}+\\sqrt{k^2+3k}}\\)<br><br>
-                \\(k\\)로 나누면: \\(\\frac{4}{\\sqrt{1+\\frac{7}{k}}+\\sqrt{1+\\frac{3}{k}}} \\to \\frac{4}{2} = 2\\)`
-            },
-            {
-                level: "easy",
-                levelText: "3단계 - 계수 변형",
-                question: `두 곡선 \\(y = \\sqrt{6x}\\), \\(y = \\sqrt{2x}\\)와 직선 \\(x = k\\) (\\(k > 0\\))의 교점을 각각 A, B라 할 때,<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - \\overline{OB})\\)의 값은?`,
-                options: ["\\(1\\)", "\\(2\\)", "\\(3\\)", "\\(4\\)", "\\(5\\)"],
-                answer: 1,
-                explanation: `\\(\\overline{OA} = \\sqrt{k^2+6k}\\), \\(\\overline{OB} = \\sqrt{k^2+2k}\\)<br><br>
-                유리화 후: \\(\\frac{4k}{\\sqrt{k^2+6k}+\\sqrt{k^2+2k}}\\)<br><br>
-                \\(k \\to \\infty\\): \\(\\frac{4}{2} = 2\\)`
-            },
-            {
-                level: "medium",
-                levelText: "4단계 - 중급",
-                question: `두 곡선 \\(y = \\sqrt{ax}\\), \\(y = \\sqrt{bx}\\) (\\(a > b > 0\\))와 직선 \\(x = k\\)의 교점을 각각 A, B라 하자.<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - \\overline{OB}) = 3\\)일 때, \\(a - b\\)의 값은?`,
-                options: ["\\(3\\)", "\\(6\\)", "\\(9\\)", "\\(12\\)", "\\(15\\)"],
-                answer: 3,
-                explanation: `유리화 후 극한값: \\(\\frac{(a-b)k}{\\sqrt{k^2+ak}+\\sqrt{k^2+bk}} \\to \\frac{a-b}{2} = 3\\)<br><br>
-                따라서 \\(a - b = 6\\)`
-            },
-            {
-                level: "medium",
-                levelText: "5단계 - 중급 변형",
-                question: `두 곡선 \\(y = \\sqrt{10x}\\), \\(y = \\sqrt{2x}\\)와 직선 \\(x = k\\) (\\(k > 0\\))의 교점을 각각 A, B라 할 때,<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - \\overline{OB})\\)의 값은?`,
-                options: ["\\(2\\)", "\\(3\\)", "\\(4\\)", "\\(5\\)", "\\(6\\)"],
-                answer: 2,
-                explanation: `\\(\\overline{OA} - \\overline{OB} = \\sqrt{k^2+10k} - \\sqrt{k^2+2k}\\)<br><br>
-                유리화: \\(\\frac{8k}{\\sqrt{k^2+10k}+\\sqrt{k^2+2k}} \\to \\frac{8}{2} = 4\\)`
-            },
-            {
-                level: "medium",
-                levelText: "6단계 - 응용",
-                question: `곡선 \\(y = \\sqrt{8x}\\)와 직선 \\(x = k\\)의 교점을 A, 원점을 O라 하자.<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - k)\\)의 값은?`,
-                options: ["\\(2\\)", "\\(3\\)", "\\(4\\)", "\\(5\\)", "\\(6\\)"],
-                answer: 2,
-                explanation: `\\(\\overline{OA} = \\sqrt{k^2+8k}\\)<br><br>
-                \\(\\sqrt{k^2+8k} - k = \\frac{(k^2+8k)-k^2}{\\sqrt{k^2+8k}+k} = \\frac{8k}{\\sqrt{k^2+8k}+k}\\)<br><br>
-                \\(k \\to \\infty\\): \\(\\frac{8}{1+1} = 4\\)`
-            },
-            {
-                level: "medium",
-                levelText: "7단계 - 심화",
-                question: `두 곡선 \\(y = \\sqrt{ax}\\), \\(y = \\sqrt{2x}\\)와 직선 \\(x = k\\)의 교점을 각각 A, B라 하자.<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - \\overline{OB}) = 5\\)일 때, \\(a\\)의 값은?`,
-                options: ["\\(8\\)", "\\(10\\)", "\\(12\\)", "\\(14\\)", "\\(16\\)"],
-                answer: 2,
-                explanation: `극한값 공식: \\(\\frac{a-2}{2} = 5\\)<br><br>
-                \\(a - 2 = 10\\)<br><br>
-                \\(a = 12\\)`
-            },
-            {
-                level: "hard",
-                levelText: "8단계 - 고급",
-                question: `세 곡선 \\(y = \\sqrt{9x}\\), \\(y = \\sqrt{5x}\\), \\(y = \\sqrt{x}\\)와 직선 \\(x = k\\)의 교점을 각각 A, B, C라 하자.<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - 2\\overline{OB} + \\overline{OC})\\)의 값은?`,
-                options: ["\\(-1\\)", "\\(0\\)", "\\(1\\)", "\\(2\\)", "\\(3\\)"],
-                answer: 1,
-                explanation: `\\(\\overline{OA} = \\sqrt{k^2+9k}\\), \\(\\overline{OB} = \\sqrt{k^2+5k}\\), \\(\\overline{OC} = \\sqrt{k^2+k}\\)<br><br>
-                각각의 극한을 구하면:<br>
-                \\(\\sqrt{k^2+9k} - k \\to \\frac{9}{2}\\), \\(\\sqrt{k^2+5k} - k \\to \\frac{5}{2}\\), \\(\\sqrt{k^2+k} - k \\to \\frac{1}{2}\\)<br><br>
-                따라서: \\(\\frac{9}{2} - 2 \\cdot \\frac{5}{2} + \\frac{1}{2} = \\frac{9-10+1}{2} = 0\\)`
-            },
-            {
-                level: "hard",
-                levelText: "9단계 - 고급 응용",
-                question: `곡선 \\(y = \\sqrt{ax}\\) (\\(a > 0\\))와 직선 \\(x = k\\)의 교점을 P라 하자.<br>
-                점 P에서 x축에 내린 수선의 발을 H라 할 때,<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OP} - \\overline{OH}) = 3\\)이면 \\(a\\)의 값은?`,
-                options: ["\\(3\\)", "\\(6\\)", "\\(9\\)", "\\(12\\)", "\\(15\\)"],
-                answer: 1,
-                explanation: `\\(P = (k, \\sqrt{ak})\\), \\(H = (k, 0)\\)이므로<br>
-                \\(\\overline{OP} = \\sqrt{k^2+ak}\\), \\(\\overline{OH} = k\\)<br><br>
-                \\(\\sqrt{k^2+ak} - k = \\frac{ak}{\\sqrt{k^2+ak}+k} \\to \\frac{a}{2} = 3\\)<br><br>
-                따라서 \\(a = 6\\)`
-            },
-            {
-                level: "hard",
-                levelText: "10단계 - 최고난도",
-                question: `두 곡선 \\(y = \\sqrt{ax}\\), \\(y = \\sqrt{bx}\\) (\\(a > b > 0\\))와 직선 \\(x = k\\)의 교점을 각각 A, B라 하자.<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} \\frac{\\overline{OA}^2 - \\overline{OB}^2}{\\overline{OA} - \\overline{OB}} = 4\\)일 때,<br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - \\overline{OB})\\)의 값이 2가 되려면 \\(a - b\\)의 값은?`,
-                options: ["\\(2\\)", "\\(4\\)", "\\(6\\)", "\\(8\\)", "\\(10\\)"],
-                answer: 1,
-                explanation: `\\(\\overline{OA}^2 = k^2+ak\\), \\(\\overline{OB}^2 = k^2+bk\\)<br><br>
-                \\(\\frac{\\overline{OA}^2 - \\overline{OB}^2}{\\overline{OA} - \\overline{OB}} = \\overline{OA} + \\overline{OB}\\)<br><br>
-                \\(\\displaystyle\\lim_{k \\to \\infty} \\frac{\\overline{OA} + \\overline{OB}}{k} = \\lim_{k \\to \\infty} \\left(\\sqrt{1+\\frac{a}{k}} + \\sqrt{1+\\frac{b}{k}}\\right) = 2\\)<br><br>
-                그런데 문제에서 극한값이 4라 했으므로 이는 \\(2k\\)의 계수를 의미<br>
-                \\(\\overline{OA} - \\overline{OB} = \\frac{(a-b)k}{\\overline{OA}+\\overline{OB}} \\to \\frac{a-b}{2} = 2\\)<br><br>
-                따라서 \\(a - b = 4\\)`
-            }
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzB5ALdepM0Tu4II9BeHGDAdaC0qd2OXJp6Ofubwjc2FZ5f1aChz9ZCb1lBxkp12Xy2/exec';
+        let currentQuestionIndex = 0, userName = "", userAnswers = [];
+
+        const questions = [
+            { q: "점 A의 좌표는 $(k, \\sqrt{5k})$입니다. $\\overline{OA}$를 $k$로 나타내면?", options: ["$\\sqrt{k^2 + 5k}$", "$\\sqrt{k + 5k}$", "$k + \\sqrt{5k}$", "$\\sqrt{6k}$"], ans: "$\\sqrt{k^2 + 5k}$", exp: "$OA = \\sqrt{k^2 + (\\sqrt{5k})^2} = \\sqrt{k^2 + 5k}$" },
+            { q: "점 B의 좌표는 $(k, \\sqrt{3k})$입니다. $\\overline{OB}$를 $k$로 나타내면?", options: ["$\\sqrt{k^2 + 3k}$", "$\\sqrt{k + 3k}$", "$k + \\sqrt{3k}$", "$\\sqrt{4k}$"], ans: "$\\sqrt{k^2 + 3k}$", exp: "$OB = \\sqrt{k^2 + (\\sqrt{3k})^2} = \\sqrt{k^2 + 3k}$" },
+            { q: "$\\sqrt{k^2 + 5k}$를 $k$로 묶어 정리하면?", options: ["$k\\sqrt{1 + \\frac{5}{k}}$", "$\\sqrt{k}\\sqrt{k + 5}$", "$k + \\sqrt{5k}$", "$\\sqrt{k(k+5)}$"], ans: "$k\\sqrt{1 + \\frac{5}{k}}$", exp: "$\\sqrt{k^2(1 + \\frac{5}{k})} = k\\sqrt{1 + \\frac{5}{k}}$ (단, $k > 0$)" },
+            { q: "$\\overline{OA} - \\overline{OB} = k\\sqrt{1+\\frac{5}{k}} - k\\sqrt{1+\\frac{3}{k}}$를 유리화하면 분자는?", options: ["$\\frac{2k}{k}$", "$\\frac{2}{k}$", "$2k$", "$\\frac{5-3}{k}$"], ans: "$\\frac{2k}{k}$", exp: "$(k^2 + 5k) - (k^2 + 3k) = 2k$가 분자" },
+            { q: "유리화 후 분모는 $k(\\sqrt{1+\\frac{5}{k}} + \\sqrt{1+\\frac{3}{k}})$입니다. $k \\to \\infty$일 때 이 값은?", options: ["$2k$", "$k$", "$2$", "$\\infty$"], ans: "$2k$", exp: "$k \\to \\infty$이면 $\\sqrt{1+\\frac{5}{k}} \\to 1$, $\\sqrt{1+\\frac{3}{k}} \\to 1$이므로 분모 $\\to 2k$" },
+            { q: "따라서 $\\displaystyle\\lim_{k \\to \\infty} (\\overline{OA} - \\overline{OB}) = \\lim_{k \\to \\infty} \\frac{2k}{2k} = ?$", options: ["$1$", "$\\frac{1}{2}$", "$2$", "$0$"], ans: "$1$", exp: "$\\frac{2k}{2k} = 1$" },
+            { q: "**[검증]** $k = 100$일 때 $\\overline{OA} - \\overline{OB}$의 근사값은?", options: ["약 $1$", "약 $0.5$", "약 $2$", "약 $0.1$"], ans: "약 $1$", exp: "$\\sqrt{10500} - \\sqrt{10300} \\approx 102.47 - 101.49 \\approx 0.98 \\approx 1$" },
+            { q: "**[유사]** $y = \\sqrt{ax}$, $y = \\sqrt{bx}$일 때 $\\lim_{k \\to \\infty}(OA - OB)$는?", options: ["$\\frac{a-b}{2}$", "$a - b$", "$\\sqrt{a} - \\sqrt{b}$", "$\\frac{\\sqrt{a}-\\sqrt{b}}{2}$"], ans: "$\\frac{a-b}{2}$", exp: "같은 방법으로 유리화하면 $\\frac{(a-b)k}{2k} = \\frac{a-b}{2}$" },
+            { q: "**[응용]** $y = \\sqrt{7x}$, $y = \\sqrt{3x}$일 때 $\\lim_{k \\to \\infty}(OA - OB)$는?", options: ["$2$", "$\\frac{7-3}{2} = 2$", "$4$", "$\\sqrt{7} - \\sqrt{3}$"], ans: "$\\frac{7-3}{2} = 2$", exp: "$\\frac{7-3}{2} = 2$" },
+            { q: "**[최종]** 원래 문제의 정답은?", options: ["① $\\frac{1}{6}$", "② $\\frac{1}{4}$", "③ $\\frac{1}{3}$", "④ $\\frac{1}{2}$", "⑤ $1$"], ans: "⑤ $1$", exp: "$\\frac{5-3}{2} = 1$이므로 정답은 ⑤" }
         ];
 
-        let currentQuestion = 0;
-        let score = 0;
-        let answered = false;
-
-        function initQuiz() {
-            const container = document.getElementById('quizContainer');
-            container.innerHTML = '';
-
-            problems.forEach((problem, index) => {
-                const card = document.createElement('div');
-                card.className = `quiz-card ${index === 0 ? 'active' : ''}`;
-                card.id = `question${index}`;
-
-                let levelClass = 'level-easy';
-                if (problem.level === 'medium') levelClass = 'level-medium';
-                if (problem.level === 'hard') levelClass = 'level-hard';
-
-                card.innerHTML = `
-                    <span class="level-badge ${levelClass}">${problem.levelText}</span>
-                    <div class="question-number">문제 ${index + 1}</div>
-                    <div class="question-text">${problem.question}</div>
-                    <div class="options">
-                        ${problem.options.map((opt, i) => `
-                            <div class="option" data-index="${i}" onclick="selectOption(${index}, ${i})">
-                                ${String.fromCharCode(9312 + i)} ${opt}
-                            </div>
-                        `).join('')}
-                    </div>
-                    <button class="btn btn-primary" id="submitBtn${index}" onclick="submitAnswer(${index})" disabled>정답 확인</button>
-                    <div class="explanation" id="explanation${index}">
-                        <h4>풀이</h4>
-                        <p>${problem.explanation}</p>
-                    </div>
-                `;
-
-                container.appendChild(card);
-            });
-
-            MathJax.typesetPromise();
-        }
-
-        function selectOption(questionIndex, optionIndex) {
-            if (answered) return;
-
-            const card = document.getElementById(`question${questionIndex}`);
-            const options = card.querySelectorAll('.option');
-
-            options.forEach(opt => opt.classList.remove('selected'));
-            options[optionIndex].classList.add('selected');
-
-            document.getElementById(`submitBtn${questionIndex}`).disabled = false;
-        }
-
-        function submitAnswer(questionIndex) {
-            if (answered) return;
-            answered = true;
-
-            const card = document.getElementById(`question${questionIndex}`);
-            const options = card.querySelectorAll('.option');
-            const selected = card.querySelector('.option.selected');
-            const selectedIndex = parseInt(selected.dataset.index);
-            const correctIndex = problems[questionIndex].answer - 1;
-
-            if (selectedIndex === correctIndex) {
-                selected.classList.add('correct');
-                score++;
-            } else {
-                selected.classList.add('wrong');
-                options[correctIndex].classList.add('correct');
-            }
-
-            document.getElementById(`explanation${questionIndex}`).classList.add('show');
-
-            const btn = document.getElementById(`submitBtn${questionIndex}`);
-            btn.textContent = currentQuestion < problems.length - 1 ? '다음 문제' : '결과 보기';
-            btn.onclick = () => nextQuestion();
-            btn.disabled = false;
-
-            updateProgress();
-            MathJax.typesetPromise();
-        }
-
-        function nextQuestion() {
-            answered = false;
-
-            if (currentQuestion < problems.length - 1) {
-                document.getElementById(`question${currentQuestion}`).classList.remove('active');
-                currentQuestion++;
-                document.getElementById(`question${currentQuestion}`).classList.add('active');
-                MathJax.typesetPromise();
-            } else {
-                showResults();
-            }
-        }
-
-        function updateProgress() {
-            const progress = ((currentQuestion + 1) / problems.length) * 100;
-            const progressBar = document.getElementById('progressBar');
-            progressBar.style.width = progress + '%';
-            progressBar.textContent = `${currentQuestion + 1} / ${problems.length}`;
-        }
-
-        function showResults() {
-            document.querySelectorAll('.quiz-card').forEach(card => card.classList.remove('active'));
-
-            const resultCard = document.getElementById('resultCard');
-            resultCard.classList.add('active');
-
-            document.getElementById('finalScore').textContent = score;
-
-            let message = '';
-            if (score === 10) {
-                message = '완벽합니다! 기하와 극한의 달인이시네요!';
-            } else if (score >= 8) {
-                message = '훌륭합니다! 개념을 잘 이해하고 계시네요.';
-            } else if (score >= 6) {
-                message = '좋습니다! 조금만 더 연습하면 완벽해질 거예요.';
-            } else if (score >= 4) {
-                message = '기본 개념을 다시 복습해보세요.';
-            } else {
-                message = '유리화와 극한 개념을 처음부터 공부해보세요.';
-            }
-
-            document.getElementById('resultMessage').textContent = message;
-        }
-
-        function restartQuiz() {
-            currentQuestion = 0;
-            score = 0;
-            answered = false;
-
-            document.getElementById('resultCard').classList.remove('active');
-            document.getElementById('progressBar').style.width = '0%';
-            document.getElementById('progressBar').textContent = '0 / 10';
-
-            initQuiz();
-        }
-
-        // Initialize
-        initQuiz();
+        userAnswers = new Array(questions.length).fill(null);
+        function renderMath(element) { renderMathInElement(element || document.body, { delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}], throwOnError: false }); }
+        function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function startQuiz() { userName = document.getElementById('username-input').value.trim(); if (!userName) return alert("이름을 입력해주세요!"); showPage('page-quiz'); loadQuestion(); }
+        function loadQuestion() { const q = questions[currentQuestionIndex]; document.getElementById('current-q-number').textContent = currentQuestionIndex + 1; document.getElementById('question-text').innerHTML = q.q; document.getElementById('progress-bar').style.width = `${(currentQuestionIndex / questions.length) * 100}%`; const optContainer = document.getElementById('options-container'), prevBtn = document.getElementById('prev-btn'), submitBtn = document.getElementById('submit-btn'), nextBtn = document.getElementById('next-btn'), feedbackDiv = document.getElementById('feedback'); optContainer.innerHTML = ''; const existingAnswer = userAnswers[currentQuestionIndex]; q.options.forEach(opt => { const label = document.createElement('label'); label.className = "option-label block p-4 bg-white border border-slate-200 rounded-xl shadow-sm"; const isChecked = existingAnswer && existingAnswer.selected === opt; label.innerHTML = `<div class="flex items-center"><input type="radio" name="quiz-opt" value="${opt}" class="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500 mr-3" ${isChecked ? 'checked' : ''} ${existingAnswer ? 'disabled' : ''}><span class="text-lg ${existingAnswer ? 'text-slate-600' : ''}">${opt}</span></div>`; optContainer.appendChild(label); }); prevBtn.classList.toggle('hidden', currentQuestionIndex === 0); if (existingAnswer) { showFeedbackUI(existingAnswer.isCorrect, q.ans, q.exp); submitBtn.classList.add('hidden'); nextBtn.classList.remove('hidden'); } else { feedbackDiv.classList.add('hidden'); submitBtn.classList.remove('hidden'); nextBtn.classList.add('hidden'); } renderMath(document.getElementById('question-area')); }
+        function showFeedbackUI(isCorrect, ans, exp) { const fb = document.getElementById('feedback'); fb.classList.remove('hidden'); fb.className = `mt-6 p-5 rounded-xl text-white shadow-lg ${isCorrect ? 'bg-emerald-500' : 'bg-rose-500'}`; fb.innerHTML = `<div class="flex items-center mb-2"><span class="text-2xl mr-2">${isCorrect ? '🎉' : '❌'}</span><span class="text-lg font-bold">${isCorrect ? "정답입니다!" : "아쉽네요."}</span></div>${!isCorrect ? `<div class="mb-2">정답: <strong>${ans}</strong></div>` : ''}<div class="text-sm font-normal opacity-90 border-t border-white/20 pt-2 mt-2 leading-relaxed">${exp}</div>`; renderMath(fb); }
+        function submitAnswer() { const selected = document.querySelector('input[name="quiz-opt"]:checked'); if (!selected) return alert("보기를 선택해주세요!"); const q = questions[currentQuestionIndex]; const clean = (s) => s.replace(/\s/g, ''); const isCorrect = clean(selected.value) === clean(q.ans); userAnswers[currentQuestionIndex] = { selected: selected.value, isCorrect: isCorrect }; showFeedbackUI(isCorrect, q.ans, q.exp); document.querySelectorAll('input[name="quiz-opt"]').forEach(r => r.disabled = true); document.getElementById('submit-btn').classList.add('hidden'); document.getElementById('next-btn').classList.remove('hidden'); }
+        function prevQuestion() { if (currentQuestionIndex > 0) { currentQuestionIndex--; loadQuestion(); } }
+        function nextQuestion() { currentQuestionIndex++; if (currentQuestionIndex < questions.length) { loadQuestion(); } else { finishQuiz(); } }
+        function finishQuiz() { showPage('page-results'); const finalScore = userAnswers.filter(a => a && a.isCorrect).length; const scoreDisplay = document.getElementById('final-score'); let currentDisplayScore = 0; const interval = setInterval(() => { if (currentDisplayScore >= finalScore) { clearInterval(interval); scoreDisplay.textContent = finalScore; } else { currentDisplayScore++; scoreDisplay.textContent = currentDisplayScore; } }, 100); if(finalScore === 0) scoreDisplay.textContent = 0; sendResult(finalScore); }
+        function sendResult(finalScore) { const status = document.getElementById('upload-status'); const data = { name: userName, score: finalScore, quizTitle: "2523-곡선교점극한", date: new Date().toLocaleString() }; fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }).then(() => { status.textContent = "결과가 안전하게 저장되었습니다."; status.classList.replace('text-slate-500', 'text-emerald-600'); }).catch(() => { status.textContent = "결과 저장에 실패했습니다."; status.classList.replace('text-slate-500', 'text-rose-600'); }); }
+        window.onload = () => renderMath();
     </script>
 </body>
 </html>
